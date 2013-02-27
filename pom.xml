@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!--
+    Copyright 2013 Red Hat, Inc. and/or its affiliates.
+
+    This file is part of rrpm.
+
+    rrpm is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    rrpm is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with rrpm.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.redhat.util</groupId>
+  <artifactId>rrpm</artifactId>
+  <packaging>jar</packaging>
+  <version>1.1</version>
+  <name>rrpm</name>
+  <url>https://github.com/bserdar/rrpm</url>
+  <licenses>
+    <license>
+      <name>GNU General Public License Version 3</name>
+      <url>http://www.gnu.org/licenses</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Burak Serdar</name>
+      <email>bserdar@redhat.com</email>
+    </developer>
+  </developers>
+  <contributors>
+    <contributor>
+      <name>Naveen Malik</name>
+      <email>nmalik@redhat.com</email>
+    </contributor>
+  </contributors>
+  <dependencies>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.0</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>rpm-maven-plugin</artifactId>
+        <version>2.1-alpha-2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>rpm</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <copyright>2013, Red Hat, Inc. and/or its affiliates.</copyright>
+          <group>Application/Administration</group>
+          <name>${project.artifactId}</name>
+          <release>1</release>
+          <group>Applications/File</group>
+          <url>https://github.com/bserdar/rrpm</url>
+          <license>GPLv3</license>
+          <mappings>
+            <mapping>
+              <directory>/usr/share/rrpm-${version}</directory>
+              <filemode>644</filemode>
+              <sources>
+                <source>
+                  <location>target/${project.build.finalName}.${project.packaging}</location>
+                </source>
+              </sources>
+            </mapping>
+            <mapping>
+              <directory>/usr/share/rrpm-${version}</directory>
+              <filemode>755</filemode>
+              <sources>
+                <source>
+                  <location>rrpm</location>
+                </source>
+              </sources>
+            </mapping>
+            <mapping>
+              <directory>/usr/bin</directory>
+              <sources>
+                 <softlinkSource>
+                     <destination>rrpm</destination>
+                     <location>/usr/share/rrpm-${version}/rrpm</location>
+                 </softlinkSource>
+              </sources>
+            </mapping>
+          </mappings>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
