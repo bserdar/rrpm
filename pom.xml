@@ -59,6 +59,15 @@
         </configuration>
       </plugin>
       <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+           <descriptors>
+              <descriptor>src/main/assembly/dist.xml</descriptor>
+           </descriptors>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>rpm-maven-plugin</artifactId>
         <version>2.1-alpha-2</version>
@@ -79,7 +88,7 @@
           <license>GPLv3</license>
           <mappings>
             <mapping>
-              <directory>/usr/share/rrpm-${version}</directory>
+              <directory>/usr/share/rrpm-${project.version}</directory>
               <filemode>644</filemode>
               <sources>
                 <source>
@@ -88,7 +97,7 @@
               </sources>
             </mapping>
             <mapping>
-              <directory>/usr/share/rrpm-${version}</directory>
+              <directory>/usr/share/rrpm-${project.version}</directory>
               <filemode>755</filemode>
               <sources>
                 <source>
@@ -101,7 +110,7 @@
               <sources>
                  <softlinkSource>
                      <destination>rrpm</destination>
-                     <location>/usr/share/rrpm-${version}/rrpm</location>
+                     <location>/usr/share/rrpm-${project.version}/rrpm</location>
                  </softlinkSource>
               </sources>
             </mapping>
