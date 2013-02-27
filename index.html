@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>rrpm by bserdar</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>rrpm</h1>
+        <p>Manage RPMs on remote hosts</p>
+
+        <p class="view"><a href="https://github.com/bserdar/rrpm">View the Project on GitHub <small>bserdar/rrpm</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/bserdar/rrpm/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/bserdar/rrpm/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/bserdar/rrpm">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p>rrpm maintains RPMs on remote hosts using host manifests defined as text files. To install/update RPMs on hosts, you simply run:</p>
+
+<p><code>rrpm -l root -r repositories host-manifest-1 host-manifest-2 host-manifest-3...</code></p>
+
+<h3>Defining Repositories</h3>
+
+<p>rrpm uses yum repositories. Define your repositories in a text file, one repository for each line, using the following format:</p>
+
+<p><code>reponame=url [precedence]</code></p>
+
+<p><code>reponame</code> is a short identifier for the repository. It can be used to select an rpm from a perticular repository.
+<code>url</code> is the URL for the yum repository.
+<code>precedence</code> is optional. Repositories with lower precedence are processed first. If an rpm is located in more than one repository, the copy in the lower precedence repository will be used.</p>
+
+<p>Example:</p>
+
+<p>production-repo=http://myhost/prodrepo 1
+dev-repo=http://myhost/devrepo 2</p>
+
+<h3>Host Manifests</h3>
+
+<p>A host manifest gives the name of the host, any base manifests, and a list of RPMs:</p>
+
+<p>`
+host=hostname</p>
+
+<p>import=file1[,file2...]</p>
+
+<p>rpmname=arch:architecture [epoch:n] [version:ver] [release:rel] [repo:reponame] [action:install|erase]
+rpmname=...
+`</p>
+
+<ul>
+<li>The <code>host</code> decleration give the remote host name.</li>
+<li>The <code>import</code> decleration lists a comma separated list of manifest files to import from. Redefinition of an RPM overrides the previous definition, so anything redefined in the current host manifest overrides the previous definitions. Imported host manifests can import from other files. This way, base profiles can be prepared, and any changes can be overriden in the individual host files.</li>
+<li>The RPM declerations are the RPMs to be installed or removed on/from this host. The following elements are defined:
+
+<ul>
+<li>arch: RPM Architecture. This is the only mandatory element.</li>
+<li>epoch: RPM epoch. If omitted, LATEST is assumed.</li>
+<li>version: RPM version. If omitted, LATEST is assumed.</li>
+<li>release: RPM release. If omitted, LATEST is assumed.</li>
+<li>repo: The repository to resolve the RPM. If omitted, all repositories are scanned to find the best matching RPM.</li>
+<li>action: Install or erase. If omitted, install is assumed.</li>
+</ul>
+</li>
+</ul><h3>Usage</h3>
+
+<p>rrpm is run as follows:</p>
+
+<p><code>rrpm -r repofile [-a] [-s] [-p] hostfile1 hostfile2 ...</code></p>
+
+<p>The options are:</p>
+
+<p>-a : Update all RPMs. If omitted, only the missing RPMs will be installed, and RPMs to be deleted will be deleted.</p>
+
+<p>-s : Update all snapshots. If given, all RPMs containing SNAPSHOT in its version will be reinstalled</p>
+
+<p>-p : Print what will be updated, but don't update</p>
+
+<p>rrpm uses ssh to remotely run rpm. Passwordless ssh login for all the hosts is required to prevent asking passwords during execution.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/bserdar">bserdar</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
