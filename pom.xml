@@ -94,6 +94,12 @@
                 <source>
                   <location>target/${project.build.finalName}.${project.packaging}</location>
                 </source>
+                <source>
+                  <location>COPYING</location>
+                </source>
+                <source>
+                  <location>INSTALL</location>
+                </source>
               </sources>
             </mapping>
             <mapping>
