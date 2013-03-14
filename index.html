@@ -73,7 +73,8 @@ rpmname=...
 <li>action: Install or erase. If omitted, install is assumed.</li>
 </ul>
 </li>
-</ul><h3>Usage</h3>
+</ul>
+<h3>Usage</h3>
 
 <p>rrpm is run as follows:</p>
 
@@ -87,7 +88,89 @@ rpmname=...
 
 <p>-p : Print what will be updated, but don't update</p>
 
-<p>rrpm uses ssh to remotely run rpm. Passwordless ssh login for all the hosts is required to prevent asking passwords during execution.</p>
+<p>rrpm uses ssh to remotely run rpm. Passwordless ssh login for all
+          the hosts is required to prevent asking passwords during
+          execution.</p>
+
+<h3>Using RRPM to maintain development environments</h3>
+
+<p>Development environments usually have several systems for different
+          work streams. Work from different groups are deployed on to
+          separate sytems for testing. rrpm can be used effectively to
+          maintain such development environments.</p>
+<p>As an example, suppose production versions of RPMs are stored in a
+          production yum repository, and development versions of RPMs
+          are stored in a development repository. The development RPMs
+          have "SNAPSHOT" in their versions.<p>
+<p>Repositories file:<br/>
+<code>
+production=http://repositoryhost/production 1<br/>
+development=http://repositoryhost/development 2</br/>
+</code></p>
+<p>With this repository file, RPMs will be first looked up in the
+              production repository, and if they are not found there,
+              they will be looked up in the development repository</p>
+
+<p>The <code>production</code> manifest file lists the RPMs deployed to production:
+<code>
+module1=arch:noarch version:1.0<br/>
+module2=arch:noarch version:2.2<br/>
+module3=arch:noarch version:3.1<br/>
+</code></p>
+
+<p>The production hosts use the <code>production</code> manifest:<br/>
+<code>
+host=productionhost.company.com<br/>
+import=production
+</code></p>
+
+<p>Development hosts use the <code>production</code> manifest as well,
+              but override the component that are under
+              development:<br/>
+devhost1:<br/>
+<code>
+host=devhost1.company.com<br/>
+import=production<br/>
+<br/>
+module2=arch:noarch version:2.3.SNAPSHOT
+</code></p>
+<p>With this configuration, rrpm installs version 1.0 of
+              <code>module1</code>, version 2.3.SNAPSHOT of
+              <code>module2</code> and version 3.1 of
+              <code>module3</code> to the host
+              <code>devhost1</code>. Whenever development group makes
+              builds a new RPM for <code>module3</code>, then publish
+              that RPM to the development repository, and run rrpm
+              with -s flag to update all snapshots on that host.</p>
+
+<p>Using a similar process, one can create named releases that contain
+              a set of artifacts:<br/>
+release2:<br/>
+<code>
+module2=arch:noarch version:2.3.SNAPSHOT<br/>
+module3=arch:noarch version:3.2.SNAPSHOT
+</code></p>
+
+<p>Then, a host can be quickly configured to contain the artifacts for
+              this release:
+<code>
+host=devhost1.company.com<br/>
+import=production,release2
+</code></p>
+
+<p>With this configuration, all RPMs that are redefined in
+              <code>release2</code> along with all the RPMs that are
+              in <code>production</code> but that are not redefined in
+              <code>release2</code> will be installed to the host.</p>
+
+<p>Once all development host files are setup, simply running<br/>
+<code>
+    rrpm -r repositories -l root -s devhost*
+</code><br/>
+will update all the snapshot RPMS on all development hosts.</p>
+
+          
+
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/bserdar">bserdar</a></p>
