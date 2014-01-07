@@ -135,6 +135,10 @@ public class HostManifest {
         return c.toArray(new RPMRequest[c.size()]);
     }
 
+    public String toString() {
+        return requests.toString();
+    }
+
     private boolean reservedName(String s) {
         for(String x:reservedNames)
             if(x.equals(s))

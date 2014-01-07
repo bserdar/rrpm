@@ -271,6 +271,7 @@ public class Main {
         for(int i=0;i<req.length;i++)
             if(req[i].action==RPMRequest.Action.install)
                 ret.add(resolve(req[i],repositories));
+                
         return ret.toArray(new RPMInfo[ret.size()]);
     }
 
