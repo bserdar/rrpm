@@ -100,7 +100,10 @@ public class YumRepo {
     }
 
     public static RPMInfo[] getYumRepoInfo(URL url) throws Exception {
-        URL file=new URL(url.toString()+"/repodata/primary.xml.gz");
+        String baseUrl = url.toString();
+        Document repoMd = getRepoMd(baseUrl);
+        String primaryXmlUrl = extractPrimaryXmlLocation(repoMd);
+        URL file=new URL(baseUrl + "/" + primaryXmlUrl);
         InputStream stream=file.openStream();
         GZIPInputStream gzi=new GZIPInputStream(stream);
 
@@ -138,6 +141,40 @@ public class YumRepo {
             return list.toArray(new RPMInfo[list.size()]);
         } else
             throw new RuntimeException("Unexpected element:"+root.getTagName());
+    }
+
+    private static String extractPrimaryXmlLocation(Document repoMd) {
+        try {
+            NodeList dataElements = repoMd.getElementsByTagName("data");
+            for (int i = 0; i < dataElements.getLength(); i++) {
+                Node dataNode = dataElements.item(i);
+                if (dataNode.getAttributes().getNamedItem("type").getNodeValue().equals("primary")) {
+                    for (int j = 0; j < dataNode.getChildNodes().getLength(); j++) {
+                        Node childNode = dataNode.getChildNodes().item(j);
+                        if (childNode.getNodeName() != null && childNode.getNodeName().equals("location")) {
+                            return childNode.getAttributes().getNamedItem("href").getNodeValue();
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Exception while trying to determine primary xml location", e);
+        }
+        throw new RuntimeException("Unable to determine primary xml location from repomd.xml");
+    }
+
+    private static Document getRepoMd(String baseUrl) {
+        try {
+            URL file = new URL(baseUrl + "/repodata/repomd.xml");
+            InputStream stream = file.openStream();
+
+            Document repoMd = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(stream);
+            return repoMd;
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Unable to read repomd.xml", e);
+        }
     }
 
     public static YumRepo find(Collection<YumRepo> coll,String name) {
