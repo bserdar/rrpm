@@ -9,8 +9,8 @@ rrpm is written in Java. You'll need Java JDK 1.6 and Apache Maven
 from the source directory, and it will build everything you need. This
 will build the following packages:
 
-   target/rrpm-1.2-dist.tar.gz
-   target/rpm/rrpm/RPMS/noarch/rrpm-1.2-1.noarch.rpm
+   target/rrpm-1.3-dist.tar.gz
+   target/rpm/rrpm/RPMS/noarch/rrpm-1.3-1.noarch.rpm
 
 You can either install the RPM package, or untar the tarball.
 
@@ -18,13 +18,13 @@ Installing the RPM package:
 
 Run
 
-   rpm -i rrpm-1.2-1.noarch.rpm
+   rpm -i rrpm-1.3-1.noarch.rpm
 
-It will install rrpm under /usr/share/rrpm-1.2, and create a symlink
+It will install rrpm under /usr/share/rrpm-1.3, and create a symlink
 under /usr/bin to the rrpm binary.
 
 Installing the tarball:
 
 Run
 
-   tar xfz rrpm-1.2-dist.tar.gz
+   tar xfz rrpm-1.3-dist.tar.gz
