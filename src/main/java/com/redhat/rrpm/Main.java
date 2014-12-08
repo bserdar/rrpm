@@ -34,6 +34,7 @@ import java.net.URL;
 /**
  * @author Burak Serdar (bserdar@redhat.com)
  * @author Naveen Malik (nmalik@redhat.com)
+ * @author Kevin Howell (khowell@redhat.com)
  */
 public class Main {
     
@@ -44,13 +45,14 @@ public class Main {
         boolean noNewInstalls;
         boolean noDeletions;
         boolean noUpdates;
+        List<String> yamlOverrides = new ArrayList<String>();
 
     }
 
     public static void main(String[] args) throws Exception {
         Options options=new Options();
         if(args.length==0) {
-            System.out.println("rrpm [-r repofile ...] [-s] [-a] [-l username] manifest ...\n"+
+            System.out.println("rrpm [-r repofile ...] [-s] [-a] [-l username] [-y yaml_path ...] manifest ...\n"+
                                " where \n"+
                                "   -s : refresh SNAPSHOTs\n"+
                                "   -a : refresh everything\n"+
@@ -59,6 +61,7 @@ public class Main {
                                "   -u : No updates, fail if not all RPMs are all new or to be deleted\n"+
                                "   -l username : username\n"+
                                "   -p : Only print changes, don't update\n"+
+                               "   -y yaml_path : yaml file to use to override versions\n"+
                                "Repo file format:\n"+
                                "   reponame=url [sequence]\n"+
                                "where optional sequence gives the sequence with which repository will be used to resolve RPMs.\n"+
@@ -103,6 +106,18 @@ public class Main {
                 newArgs.remove(index);
             }
 
+            done = false;
+            do {
+                index = newArgs.indexOf("-y");
+                if (index != -1) {
+                    options.yamlOverrides.add(newArgs.get(index + 1));
+                    newArgs.remove(index);
+                    newArgs.remove(index);
+                } else {
+                    done = true;
+                }
+            } while (!done);
+
             options.printOnly=getFlag(newArgs,"-p");
             options.refreshSnapshots=getFlag(newArgs,"-s");
             options.refreshEverything=getFlag(newArgs,"-a");
@@ -133,6 +148,9 @@ public class Main {
         System.out.println("Processing "+hostManifest.getHost());
 
         RPMRequest[] requests=hostManifest.getRPMs();
+        for (String override : options.yamlOverrides) {
+            requests = new YamlVersionOverride(override).overrideVersions(requests);
+        }
         RPMInfo[] resolvedRequests=resolve(requests,repositories);
         Comparator<RPMInfo> rpminfoComparator=new Comparator<RPMInfo>() {
             public int compare(RPMInfo r1,RPMInfo r2) {

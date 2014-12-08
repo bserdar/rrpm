@@ -82,6 +82,22 @@ public class RPMRequest {
         action=Action.valueOf(s);
     }
 
+    /**
+     * Creates a copy of an RPMRequest, but overrides the version and release
+     * @param r request to copy
+     * @param versionOverride version to override with
+     * @param releaseOverride release to override with
+     */
+    public RPMRequest(RPMRequest r, String versionOverride, String releaseOverride) {
+        name = r.name;
+        arch = r.arch;
+        epoch = r.epoch;
+        version = versionOverride;
+        release = releaseOverride != null ? releaseOverride : LATEST;
+        action = r.action;
+        repo = r.repo;
+    }
+
     private Map<String,String> parse(String s) {
         StringBuffer buf=new StringBuffer();
         int state=0;
